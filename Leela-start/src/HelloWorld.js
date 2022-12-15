@@ -8,7 +8,7 @@ import {
   getCurrentWalletConnected,
 } from "./util/interact.js";
 
-import alchemylogo from "./alchemylogo.svg";
+import LeelaLogo from "./LeelaLogo.png";
 
 const HelloWorld = () => {
   //state variables
@@ -23,8 +23,7 @@ const HelloWorld = () => {
     setMessage(message);
     addSmartContractListener();
 
-    const { address, status } = await getCurrentWalletConnected();
-
+    const {address, status} = await getCurrentWalletConnected();
     setWallet(address);
     setStatus(status);
 
@@ -33,14 +32,15 @@ const HelloWorld = () => {
 
   function addSmartContractListener() {
     helloWorldContract.events.UpdatedMessages({}, (error, data) => {
-      if (error) {
+      if(error) {
         setStatus("😥 " + error.message);
       } else {
         setMessage(data.returnValues[1]);
         setNewMessage("");
         setStatus("🎉 Your message has been updated!");
       }
-    });
+    })
+
   }
 
   function addWalletListener() {
@@ -48,7 +48,7 @@ const HelloWorld = () => {
       window.ethereum.on("accountsChanged", (accounts) => {
         if (accounts.length > 0) {
           setWallet(accounts[0]);
-          setStatus("👆🏽 Write a message in the text-field above.");
+          setStatus("👆🏽 Enter a deposit amount above");
         } else {
           setWallet("");
           setStatus("🦊 Connect to Metamask using the top right button.");
@@ -66,23 +66,26 @@ const HelloWorld = () => {
         </p>
       );
     }
+
   }
 
   const connectWalletPressed = async () => {
     const walletResponse = await connectWallet();
     setStatus(walletResponse.status);
     setWallet(walletResponse.address);
+
   };
 
   const onUpdatePressed = async () => {
     const { status } = await updateMessage(walletAddress, newMessage);
-    setStatus(status);
+    setStatus(status); 
+
   };
 
   //the UI of our component
   return (
     <div id="container">
-      <img id="logo" src={alchemylogo}></img>
+      <img id="logo" src={LeelaLogo}></img>
       <button id="walletButton" onClick={connectWalletPressed}>
         {walletAddress.length > 0 ? (
           "Connected: " +
@@ -94,22 +97,22 @@ const HelloWorld = () => {
         )}
       </button>
 
-      <h2 style={{ paddingTop: "50px" }}>Current Message:</h2>
+      <h2 style={{ paddingTop: "50px" }}>Current Contract Balance:</h2>
       <p>{message}</p>
 
-      <h2 style={{ paddingTop: "18px" }}>New Message:</h2>
+      <h2 style={{ paddingTop: "18px" }}>Send Deposit:</h2>
 
       <div>
         <input
           type="text"
-          placeholder="Update the message in your smart contract."
+          placeholder="The balance in your smart contract."
           onChange={(e) => setNewMessage(e.target.value)}
           value={newMessage}
         />
         <p id="status">{status}</p>
 
         <button id="publish" onClick={onUpdatePressed}>
-          Update
+          Send Deposit
         </button>
       </div>
     </div>
